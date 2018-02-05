@@ -1,10 +1,14 @@
+package components;
+
+import com.badlogic.ashley.core.Component;
+
 /**
  * Represent a location in a rectangular grid.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 2016.02.29
  */
-public class Location
+public class Location implements Component
 {
     // Row and column positions.
     private int row;
@@ -20,7 +24,7 @@ public class Location
         this.row = row;
         this.col = col;
     }
-    
+
     /**
      * Implement content equality.
      */
@@ -70,4 +74,8 @@ public class Location
     {
         return col;
     }
+
+	public double distance(Location b) {
+		return Math.sqrt(Math.pow(Math.max(this.col, b.getCol()) - Math.min(this.col, b.getCol()), 2) + Math.pow(Math.max(this.row, b.getRow()) - Math.min(this.row, b.getRow()), 2));
+	}
 }

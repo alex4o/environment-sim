@@ -1,4 +1,5 @@
-import java.awt.Color;
+package main;
+
 import java.util.HashMap;
 
 /**
@@ -17,7 +18,7 @@ public class FieldStats
     private boolean countsValid;
 
     /**
-     * Construct a FieldStats object.
+     * Construct a main.FieldStats object.
      */
     public FieldStats()
     {

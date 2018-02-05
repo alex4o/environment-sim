@@ -1,3 +1,5 @@
+package main;
+
 import java.util.Random;
 
 /**
@@ -18,7 +20,7 @@ public class Randomizer
     private static final boolean useShared = true;
 
     /**
-     * Constructor for objects of class Randomizer
+     * Constructor for objects of class main.Randomizer
      */
     public Randomizer()
     {

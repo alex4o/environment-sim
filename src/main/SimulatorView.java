@@ -1,7 +1,9 @@
-import com.flowpowered.noise.Noise;
-import com.flowpowered.noise.NoiseQuality;
-import com.flowpowered.noise.module.Module;
-import com.flowpowered.noise.module.source.Perlin;
+package main;
+
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
+import components.ColorComponent;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -24,7 +26,7 @@ public class SimulatorView extends JFrame
     // Colors used for empty locations.
     private static final Color EMPTY_COLOR = Color.white;
 
-    // Color used for objects that have no defined color.
+    // ColorComponent used for objects that have no defined color.
     private static final Color UNKNOWN_COLOR = Color.gray;
 
     private final String STEP_PREFIX = "Step: ";
@@ -50,7 +52,7 @@ public class SimulatorView extends JFrame
         stats = new FieldStats();
         colors = new LinkedHashMap<>();
         this.simulator = simulator;
-        setTitle("Fox and Rabbit Simulation");
+        setTitle("actors.Fox and actors.Rabbit Simulation");
         stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
         infoLabel = new JLabel("  ", JLabel.CENTER);
         population = new JLabel(POPULATION_PREFIX, JLabel.CENTER);
@@ -78,6 +80,8 @@ public class SimulatorView extends JFrame
         JPanel infoPane = new JPanel(new BorderLayout());
             infoPane.add(stepLabel, BorderLayout.WEST);
             infoPane.add(infoLabel, BorderLayout.CENTER);
+
+
 
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
@@ -145,11 +149,12 @@ public class SimulatorView extends JFrame
 
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
-                Object animal = field.getObjectAt(row, col);
+                Entity animal = field.getObjectAt(row, col);
                 Tile tile = field.getTile(row, col);
                 if(animal != null) {
                     stats.incrementCount(animal.getClass());
-                    fieldView.drawMark(col, row, tile.getColor(), getColor(animal.getClass()));
+
+                    fieldView.drawMark(col, row, tile.getColor(), animal.getComponent(ColorComponent.class).getColor());
                 }
                 else {
                     fieldView.drawMark(col, row, tile.getColor(), EMPTY_COLOR);
@@ -197,6 +202,28 @@ public class SimulatorView extends JFrame
             gridHeight = height;
             gridWidth = width;
             size = new Dimension(0, 0);
+
+			this.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent mouseEvent) {
+					super.mouseClicked(mouseEvent);
+					Point point = mouseEvent.getPoint();
+					Entity animal = simulator.getField().getObjectAt(point.y/yScale, point.x/xScale);
+
+					setInfoText(animal.toString());
+
+					for(Component c : animal.getComponents()){
+						System.out.println(c);
+
+					}
+
+					System.out.println();
+					System.out.println(point);
+//					g.setColor(ColorComponent.BLACK);
+//					g.fillRect(point.x, point.y, xScale, yScale);
+//					fieldView.repaint();
+				}
+			});
         }
 
         /**
@@ -247,7 +274,7 @@ public class SimulatorView extends JFrame
             g.fillRect(x * xScale + padding, y * yScale + padding, xScale - padding * 2, yScale - padding * 2);
 
 
-//			if(color.equals(Color.white)){
+//			if(color.equals(ColorComponent.white)){
 //				return;
 //			}
 //

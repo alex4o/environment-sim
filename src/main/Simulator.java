@@ -1,4 +1,11 @@
+package main;
+
+import actors.Animal;
+import actors.Fox;
+import actors.Rabbit;
+import com.badlogic.ashley.core.*;
 import com.flowpowered.noise.module.source.Perlin;
+import components.*;
 
 import java.util.Random;
 import java.util.List;
@@ -34,6 +41,7 @@ public class Simulator
     // A graphical view of the simulation.
     private SimulatorView view;
 
+    private Engine engine;
     // A noise generator for the world map
     private Perlin perlin = new Perlin();
 
@@ -42,7 +50,7 @@ public class Simulator
      */
     public Simulator()
     {
-        this(DEFAULT_DEPTH, DEFAULT_WIDTH);
+        this(new Engine(), DEFAULT_DEPTH, DEFAULT_WIDTH);
     }
     
     /**
@@ -50,7 +58,7 @@ public class Simulator
      * @param heigth Depth of the field. Must be greater than zero.
      * @param width Width of the field. Must be greater than zero.
      */
-    public Simulator(int heigth, int width)
+    public Simulator(Engine engine, int heigth, int width)
     {
         if(width <= 0 || heigth <= 0) {
             System.out.println("The dimensions must be greater than zero.");
@@ -65,12 +73,28 @@ public class Simulator
         // Create a view of the state of each location in the field.
         view = new SimulatorView(heigth, width, this);
         view.setColor(Rabbit.class, Color.ORANGE);
-        view.setColor(Fox.class, Color.BLUE);
+        view.setColor(Fox.class, Color.RED);
 
 		perlin.setFrequency(10);
 		perlin.setLacunarity(20);
 		perlin.setOctaveCount(4);
+		perlin.setSeed(1984);
+		this.engine = engine;
 
+
+		engine.addEntityListener(Family.all(Move.class, ColorComponent.class).get(), new EntityListener() {
+			@Override
+			public void entityAdded(Entity entity) {
+				Move move = entity.getComponent(Move.class);
+				field.place(entity, move.getCurrent());
+			}
+
+			@Override
+			public void entityRemoved(Entity entity) {
+				Move move = entity.getComponent(Move.class);
+				field.clear(move.getCurrent());
+			}
+		});
         // Setup a valid starting point.
         reset();
     }
@@ -96,8 +120,10 @@ public class Simulator
             // delay(60);   // uncomment this to run more slowly
         }
     }
-    
-    /**
+
+    public static List<Entity> newEntities = new ArrayList<>();
+
+	/**
      * Run the simulation from its current state for a single step.
      * Iterate over the whole field updating the state of each
      * fox and rabbit.
@@ -107,19 +133,28 @@ public class Simulator
         step++;
 
         // Provide space for newborn animals.
-        List<Animal> newAnimals = new ArrayList<>();        
         // Let all rabbits act.
-        for(Iterator<Animal> it = animals.iterator(); it.hasNext(); ) {
-            Animal animal = it.next();
-            animal.act(newAnimals);
-            if(! animal.isAlive()) {
-                it.remove();
-            }
-        }
-               
-        // Add the newly born foxes and rabbits to the main lists.
-        animals.addAll(newAnimals);
+//        for(Iterator<Animal> it = animals.iterator(); it.hasNext(); ) {
+//            Animal animal = it.next();
+//
+////            animal.act(newAnimals);
+//            if(! animal.isAlive()) {
+//                it.remove();
+//            }
+//        }
 
+
+        engine.update(1);
+
+        // Add the newly born foxes and rabbits to the main lists.
+//        animals.addAll(newAnimals);
+		for(Entity entity : newEntities){
+			engine.addEntity(entity);
+		}
+
+
+
+		newEntities.clear();
         view.showStatus(step, field);
     }
         
@@ -186,15 +221,31 @@ public class Simulator
 				}
 
                 if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Fox fox = new Fox(true, field, location);
-                    animals.add(fox);
-                }
+					Entity fox = new Entity();
+					fox.add(new Age(true, 150));
+					fox.add(new Move(new Location(row, col)));
+					fox.add(new Food(9,9, FoodType.ANIMAL));
+					fox.add(new ColorComponent(Color.RED));
+					fox.add(new Life());
+					fox.add(new Breed(15, 0.08, 2));
+
+//                    Fox fox = new Fox(true, field, location);
+//                    animals.add(fox);
+                	engine.addEntity(fox);
+            	}
                 else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Rabbit rabbit = new Rabbit(true, field, location);
-                    animals.add(rabbit);
-                }
+					Entity rabbit = new Entity();
+					rabbit.add(new Age(true, 40));
+					rabbit.add(new Move(new Location(row, col)));
+					rabbit.add(new Food(9, FoodType.PLANT));
+					rabbit.add(new ColorComponent(Color.ORANGE));
+					rabbit.add(new Life());
+					rabbit.add(new Breed(5, 0.12, 4));
+
+
+					engine.addEntity(rabbit);
+
+				}
                 // else leave the location empty.
             }
         }
@@ -213,4 +264,12 @@ public class Simulator
             // wake up
         }
     }
+
+	public Field getField() {
+		return field;
+	}
+
+	public void setField(Field field) {
+		this.field = field;
+	}
 }

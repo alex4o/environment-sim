@@ -15,7 +15,7 @@ This is the first version of the simulation. This version
 does not use inheritance.
 
 How to start:
-    Create a Simulator object.
+    Create a main.Simulator object.
     Then call one of:
         + simulateOneStep - for a single step.
         + simulate - and supply a number (say 10) for that many steps.

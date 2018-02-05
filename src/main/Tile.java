@@ -1,3 +1,5 @@
+package main;
+
 import java.awt.*;
 
 public class Tile {
@@ -32,7 +34,7 @@ public class Tile {
 
 	@Override
 	public String toString() {
-		return "Tile{" +
+		return "main.Tile{" +
 				"color=" + color +
 				", elevation=" + elevation +
 				", walkable=" + walkable +

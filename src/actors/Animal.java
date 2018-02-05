@@ -1,3 +1,9 @@
+package actors;
+
+import com.badlogic.ashley.core.Entity;
+import main.Field;
+import components.Location;
+
 import java.util.List;
 
 /**
@@ -6,7 +12,7 @@ import java.util.List;
  * @author David J. Barnes and Michael Kölling
  * @version 2016.02.29 (2)
  */
-public abstract class Animal
+public abstract class Animal extends Entity
 {
     // Whether the animal is alive or not.
     private boolean alive;
@@ -39,7 +45,7 @@ public abstract class Animal
      * Check whether the animal is alive or not.
      * @return true if the animal is still alive.
      */
-    protected boolean isAlive()
+    public boolean isAlive()
     {
         return alive;
     }

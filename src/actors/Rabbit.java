@@ -1,3 +1,9 @@
+package actors;
+
+import main.Field;
+import components.Location;
+import main.Randomizer;
+
 import java.util.List;
 import java.util.Random;
 
@@ -119,5 +125,12 @@ public class Rabbit extends Animal
     private boolean canBreed()
     {
         return age >= BREEDING_AGE;
+    }
+
+    @Override
+    public String toString() {
+        return "actors.Rabbit{" +
+                "age=" + age +
+                '}';
     }
 }

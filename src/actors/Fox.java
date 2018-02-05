@@ -1,5 +1,12 @@
+package actors;
+
+import main.Field;
+import components.Location;
+import main.Randomizer;
+
 import java.util.List;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -26,7 +33,8 @@ public class Fox extends Animal
     private static final int RABBIT_FOOD_VALUE = 9;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
-    
+
+
     // Individual characteristics (instance fields).
     // The fox's age.
     private int age;
@@ -58,7 +66,6 @@ public class Fox extends Animal
      * This is what the fox does most of the time: it hunts for
      * rabbits. In the process, it might breed, die of hunger,
      * or die of old age.
-     * @param field The field currently occupied.
      * @param newFoxes A list to return newly born foxes.
      */
     public void act(List<Animal> newFoxes)
@@ -68,11 +75,9 @@ public class Fox extends Animal
         if(isAlive()) {
             giveBirth(newFoxes);            
             // Move towards a source of food if found.
-            Location newLocation = findFood();
-            if(newLocation == null) { 
-                // No food found - try to move to a free location.
-                newLocation = getField().freeAdjacentLocation(getLocation());
-            }
+            Location newLocation = findFood()
+					.orElse(getField().freeAdjacentLocation(getLocation()));
+
             // See if it was possible to move.
             if(newLocation != null) {
                 setLocation(newLocation);
@@ -111,7 +116,7 @@ public class Fox extends Animal
      * Only the first live rabbit is eaten.
      * @return Where food was found, or null if it wasn't.
      */
-    private Location findFood()
+    private Optional<Location> findFood()
     {
         Field field = getField();
         List<Location> adjacent = field.adjacentLocations(getLocation());
@@ -124,11 +129,11 @@ public class Fox extends Animal
                 if(rabbit.isAlive()) { 
                     rabbit.setDead();
                     foodLevel = RABBIT_FOOD_VALUE;
-                    return where;
+                    return Optional.ofNullable(where);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
     
     /**
@@ -171,4 +176,12 @@ public class Fox extends Animal
     {
         return age >= BREEDING_AGE;
     }
+
+	@Override
+	public String toString() {
+		return "actors.Fox{" +
+				"age=" + age +
+				", foodLevel=" + foodLevel +
+				'}';
+	}
 }

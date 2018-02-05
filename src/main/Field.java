@@ -1,5 +1,8 @@
+package main;
+
+import components.Location;
+
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -105,9 +108,9 @@ public class Field
      * @param col The desired column.
      * @return The animal at the given location, or null if there is none.
      */
-    public Object getObjectAt(int row, int col)
+    public <T> T getObjectAt(int row, int col)
     {
-        return field[row][col];
+        return (T)field[row][col];
     }
     
     /**
