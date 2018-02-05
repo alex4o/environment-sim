@@ -20,6 +20,7 @@ public class Field
     private int depth, width;
     // Storage for the animals.
     private Object[][] field;
+    private Tile[][] map;
 
     /**
      * Represent a field of the given dimensions.
@@ -31,7 +32,16 @@ public class Field
         this.depth = depth;
         this.width = width;
         field = new Object[depth][width];
+        map = new Tile[depth][width];
     }
+
+    public void setTile(int row, int col, Tile tile){
+		map[row][col] = tile;
+	}
+
+	public Tile getTile(int row, int col){
+		return map[row][col];
+	}
     
     /**
      * Empty the field.
@@ -124,7 +134,7 @@ public class Field
         List<Location> free = new LinkedList<>();
         List<Location> adjacent = adjacentLocations(location);
         for(Location next : adjacent) {
-            if(getObjectAt(next) == null) {
+            if(getObjectAt(next) == null && getTile(next.getRow(), next.getCol()).isWalkable()) {
                 free.add(next);
             }
         }

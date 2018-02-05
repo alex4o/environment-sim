@@ -1,3 +1,5 @@
+import com.flowpowered.noise.module.source.Perlin;
+
 import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
@@ -31,7 +33,10 @@ public class Simulator
     private int step;
     // A graphical view of the simulation.
     private SimulatorView view;
-    
+
+    // A noise generator for the world map
+    private Perlin perlin = new Perlin();
+
     /**
      * Construct a simulation field with default size.
      */
@@ -42,26 +47,30 @@ public class Simulator
     
     /**
      * Create a simulation field with the given size.
-     * @param depth Depth of the field. Must be greater than zero.
+     * @param heigth Depth of the field. Must be greater than zero.
      * @param width Width of the field. Must be greater than zero.
      */
-    public Simulator(int depth, int width)
+    public Simulator(int heigth, int width)
     {
-        if(width <= 0 || depth <= 0) {
+        if(width <= 0 || heigth <= 0) {
             System.out.println("The dimensions must be greater than zero.");
             System.out.println("Using default values.");
-            depth = DEFAULT_DEPTH;
+			heigth = DEFAULT_DEPTH;
             width = DEFAULT_WIDTH;
         }
         
         animals = new ArrayList<>();
-        field = new Field(depth, width);
+        field = new Field(heigth, width);
 
         // Create a view of the state of each location in the field.
-        view = new SimulatorView(depth, width);
+        view = new SimulatorView(heigth, width, this);
         view.setColor(Rabbit.class, Color.ORANGE);
         view.setColor(Fox.class, Color.BLUE);
-        
+
+		perlin.setFrequency(10);
+		perlin.setLacunarity(20);
+		perlin.setOctaveCount(4);
+
         // Setup a valid starting point.
         reset();
     }
@@ -121,11 +130,47 @@ public class Simulator
     {
         step = 0;
         animals.clear();
-        populate();
-        
+		buildWorld();
+
+
+		populate();
         // Show the starting state in the view.
         view.showStatus(step, field);
     }
+
+    private void buildWorld(){
+		for(int row = 0; row < field.getDepth(); row++) {
+			for(int col = 0; col < field.getWidth(); col++) {
+				double level = perlin.getValue(row / 100.0, col / 100.0, 10);
+
+//				System.out.printf("Noise: %f %d %d\n", level, x, y);
+				Tile tile = new Tile();
+
+				if (level <= 0.89) {
+					tile.setColor(new Color(0, 0, (int) ((level) * 255)));
+					tile.setWalkable(false);
+
+				} else if (level >= 1) {
+					double h = Math.abs(-level + 1);
+
+					int color = (int)((h * 15 ) * 150) + 100;
+					if (color > 255) color = 255;
+
+					tile.setColor(new Color(color, color, color));
+					tile.setWalkable(false);
+
+				} else {
+					if (level > 1) level = 1;
+
+					tile.setColor(new Color(0, (int) (level * 255), 0));
+				}
+				tile.setElevation(level);
+				field.setTile(row,col,tile);
+
+//				g.fillRect(x * xScale, y * yScale, xScale, yScale);
+			}
+		}
+	}
     
     /**
      * Randomly populate the field with foxes and rabbits.
@@ -136,6 +181,10 @@ public class Simulator
         field.clear();
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
+            	if(!field.getTile(row, col).isWalkable()){
+            		continue;
+				}
+
                 if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
                     Fox fox = new Fox(true, field, location);

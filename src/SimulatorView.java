@@ -1,3 +1,8 @@
+import com.flowpowered.noise.Noise;
+import com.flowpowered.noise.NoiseQuality;
+import com.flowpowered.noise.module.Module;
+import com.flowpowered.noise.module.source.Perlin;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -25,23 +30,26 @@ public class SimulatorView extends JFrame
     private final String STEP_PREFIX = "Step: ";
     private final String POPULATION_PREFIX = "Population: ";
     private JLabel stepLabel, population, infoLabel;
+    private JButton step, simulate, stop;
     private FieldView fieldView;
-    
+    private Simulator simulator;
+
     // A map for storing colors for participants in the simulation
     private Map<Class, Color> colors;
     // A statistics object computing and storing simulation information
     private FieldStats stats;
+
 
     /**
      * Create a view of the given width and height.
      * @param height The simulation's height.
      * @param width  The simulation's width.
      */
-    public SimulatorView(int height, int width)
+    public SimulatorView(int height, int width, Simulator simulator)
     {
         stats = new FieldStats();
         colors = new LinkedHashMap<>();
-
+        this.simulator = simulator;
         setTitle("Fox and Rabbit Simulation");
         stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
         infoLabel = new JLabel("  ", JLabel.CENTER);
@@ -52,10 +60,33 @@ public class SimulatorView extends JFrame
         fieldView = new FieldView(height, width);
 
         Container contents = getContentPane();
-        
+
+		step = new JButton("Step");
+		simulate = new JButton("Simulate");
+		stop = new JButton("Stop");
+
+		step.addActionListener((event) -> {
+			simulator.simulateOneStep();
+		});
+
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(WindowEvent event) {
+				System.exit(0);
+			}
+		});
+
         JPanel infoPane = new JPanel(new BorderLayout());
             infoPane.add(stepLabel, BorderLayout.WEST);
             infoPane.add(infoLabel, BorderLayout.CENTER);
+
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
+
+		buttons.add(step);
+		buttons.add(simulate);
+		buttons.add(stop);
+		infoPane.add(buttons, BorderLayout.EAST);
+
         contents.add(infoPane, BorderLayout.NORTH);
         contents.add(fieldView, BorderLayout.CENTER);
         contents.add(population, BorderLayout.SOUTH);
@@ -115,12 +146,13 @@ public class SimulatorView extends JFrame
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
                 Object animal = field.getObjectAt(row, col);
+                Tile tile = field.getTile(row, col);
                 if(animal != null) {
                     stats.incrementCount(animal.getClass());
-                    fieldView.drawMark(col, row, getColor(animal.getClass()));
+                    fieldView.drawMark(col, row, tile.getColor(), getColor(animal.getClass()));
                 }
                 else {
-                    fieldView.drawMark(col, row, EMPTY_COLOR);
+                    fieldView.drawMark(col, row, tile.getColor(), EMPTY_COLOR);
                 }
             }
         }
@@ -201,11 +233,30 @@ public class SimulatorView extends JFrame
         /**
          * Paint on grid location on this field in a given color.
          */
-        public void drawMark(int x, int y, Color color)
+        public void drawMark(int x, int y, Color ground, Color over)
         {
-            g.setColor(color);
-            g.fillRect(x * xScale, y * yScale, xScale-1, yScale-1);
-        }
+			int padding = xScale/6;
+			g.setColor(ground);
+			g.fillRect(x * xScale, y * yScale, xScale, yScale);
+
+			if(over.equals(Color.white)) {
+				return;
+			}
+
+			g.setColor(over);
+            g.fillRect(x * xScale + padding, y * yScale + padding, xScale - padding * 2, yScale - padding * 2);
+
+
+//			if(color.equals(Color.white)){
+//				return;
+//			}
+//
+//            Font font = new Font("SansSerif", Font.PLAIN, 12);
+//            g.setFont(font);
+//            g.drawString("S", x * xScale + (xScale-1)/2, y * yScale);
+//			g.setColor(color);
+
+		}
 
         /**
          * The field view component needs to be redisplayed. Copy the
