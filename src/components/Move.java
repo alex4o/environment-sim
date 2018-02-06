@@ -5,25 +5,18 @@ import com.badlogic.ashley.core.Component;
 import java.util.Optional;
 
 public class Move implements Component {
-	Location current;
 	Optional<Location> next;
 
-	public Move(Location current, Location next) {
-		this.current = current;
+	// ideas
+	int speed;
+	int energy;
+
+	public Move(Location next) {
 		this.next = Optional.of(next);
 	}
 
-	public Move(Location current) {
-		this.current = current;
+	public Move() {
 		this.next = Optional.empty();
-	}
-
-	public Location getCurrent() {
-		return current;
-	}
-
-	public void setCurrent(Location current) {
-		this.current = current;
 	}
 
 	public Optional<Location> getNext() {
@@ -41,8 +34,7 @@ public class Move implements Component {
 	@Override
 	public String toString() {
 		return "Move{" +
-				"current=" + current +
-				", next=" + next +
+				"next=" + next +
 				'}';
 	}
 }

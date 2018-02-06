@@ -9,21 +9,10 @@ public class Age implements Component {
 	private int age;
 	private int maxAge;
 
-	public Age(int age) {
+	public Age(int age, int maxAge) {
 		this.age = age;
-		this.maxAge = 100;
-	}
-
-	public Age(boolean random, int maxAge) {
-		Random rand = Randomizer.getRandom();
-		if(random) {
-			this.age = rand.nextInt(maxAge);
-		}else{
-			this.age = 0;
-		}
 		this.maxAge = maxAge;
 	}
-
 
 	public int getAge() {
 		return age;

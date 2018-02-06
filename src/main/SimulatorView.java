@@ -1,9 +1,12 @@
 package main;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import components.ColorComponent;
+import components.Move;
+import components.Name;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -42,7 +45,11 @@ public class SimulatorView extends JFrame
     private FieldStats stats;
 
 
-    /**
+	private ComponentMapper<Name> nameMapper = ComponentMapper.getFor(Name.class);
+	private ComponentMapper<ColorComponent> colourMapper = ComponentMapper.getFor(ColorComponent.class); // # british spelling
+
+
+	/**
      * Create a view of the given width and height.
      * @param height The simulation's height.
      * @param width  The simulation's width.
@@ -69,6 +76,14 @@ public class SimulatorView extends JFrame
 
 		step.addActionListener((event) -> {
 			simulator.simulateOneStep();
+		});
+
+		simulate.addActionListener((event) -> {
+			simulator.simulate(1000);
+		});
+
+		stop.addActionListener((event) -> {
+			simulator.stop();
 		});
 
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -152,9 +167,9 @@ public class SimulatorView extends JFrame
                 Entity animal = field.getObjectAt(row, col);
                 Tile tile = field.getTile(row, col);
                 if(animal != null) {
-                    stats.incrementCount(animal.getClass());
+                    stats.incrementCount(nameMapper.get(animal).getName());
 
-                    fieldView.drawMark(col, row, tile.getColor(), animal.getComponent(ColorComponent.class).getColor());
+                    fieldView.drawMark(col, row, tile.getColor(), colourMapper.get(animal).getColor());
                 }
                 else {
                     fieldView.drawMark(col, row, tile.getColor(), EMPTY_COLOR);
@@ -208,7 +223,7 @@ public class SimulatorView extends JFrame
 				public void mouseClicked(MouseEvent mouseEvent) {
 					super.mouseClicked(mouseEvent);
 					Point point = mouseEvent.getPoint();
-					Entity animal = simulator.getField().getObjectAt(point.y/yScale, point.x/xScale);
+					Entity animal = Field.getInstance().getObjectAt(point.y/yScale, point.x/xScale);
 
 					setInfoText(animal.toString());
 

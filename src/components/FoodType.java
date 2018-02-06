@@ -4,5 +4,7 @@ public enum FoodType {
 	ANIMAL,
 	PLANT,
 	MUSHROOM,
-	CORPSE
+	CORPSE,
+	GROUND,
+	WATER
 }

@@ -1,10 +1,11 @@
 package systems;
 
-import actors.Rabbit;
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import components.*;
 import main.Field;
+import components.Location;
+import main.Models;
 
 import java.util.Iterator;
 import java.util.List;
@@ -13,33 +14,37 @@ import java.util.Optional;
 public class FoodSystem extends EntitySystem {
 	private ImmutableArray<Entity> entities;
 
+	private ComponentMapper<Location> locm = ComponentMapper.getFor(Location.class);
 	private ComponentMapper<Move> mm = ComponentMapper.getFor(Move.class);
 	private ComponentMapper<Life> lm = ComponentMapper.getFor(Life.class);
 	private ComponentMapper<Food> fm = ComponentMapper.getFor(Food.class);
+	private ComponentMapper<Hunger> hm = ComponentMapper.getFor(Hunger.class);
 
 	private Field field;
 
-	public FoodSystem(Field field) {
-		this.field = field;
+	public FoodSystem() {
+		this.field = Field.getInstance();
 	}
 
 	public void addedToEngine(Engine engine) {
-		entities = engine.getEntitiesFor(Family.all(Move.class, Food.class, Life.class).get());
+		entities = engine.getEntitiesFor(Family.all(Location.class, Food.class, Life.class, Hunger.class).get());
 	}
 
 	public void update(float deltaTime) {
 		for(Entity entity : entities) {
-			Move move = mm.get(entity);
+			Location location = locm.get(entity);
 			Food food = fm.get(entity);
 			Life life = lm.get(entity);
+			Hunger hunger = hm.get(entity);
+
 			switch (food.getEatType()) {
 				case ANIMAL:
-					food.setLevel(food.getLevel() - 1);
-					if(food.getLevel() <= 0){
-						life.setDead();
+					if(life.isAlive()){
+						if(mm.has(entity)) {
+							Move move = mm.get(entity);
+							move.setNext(findFood(location, hunger));
+						}
 					}
-
-					findFood(move.getCurrent(), food);
 					break;
 				case PLANT:
 					break;
@@ -51,7 +56,7 @@ public class FoodSystem extends EntitySystem {
 		}
 	}
 
-	private Optional<Location> findFood(Location location, Food food)
+	private Optional<Location> findFood(Location location, Hunger hunger)
 	{
 		List<Location> adjacent = field.adjacentLocations(location);
 		Iterator<Location> it = adjacent.iterator();
@@ -61,10 +66,10 @@ public class FoodSystem extends EntitySystem {
 				continue;
 			}
 
-			if(fm.get(entity).getEatType() == FoodType.PLANT) {
+			if(entity.getComponent(Name.class).getName().equals("Rabbit")) {
 				if(lm.get(entity).isAlive()) {
 					lm.get(entity).setDead();
-					food.setLevel(9);
+					hunger.setLevel(9);
 
 					return Optional.ofNullable(where);
 				}

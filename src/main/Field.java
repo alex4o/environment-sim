@@ -25,12 +25,26 @@ public class Field
     private Object[][] field;
     private Tile[][] map;
 
+    private static Field instance;
+    public static Field getInstance() {
+    	if(instance == null){
+    		instance = new Field(100, 100);
+		}
+
+		return instance;
+	}
+
+	public static Field newInstance(int depth, int width){
+		instance = new Field(depth, width);
+		return instance;
+	}
+
     /**
      * Represent a field of the given dimensions.
      * @param depth The depth of the field.
      * @param width The width of the field.
      */
-    public Field(int depth, int width)
+    private Field(int depth, int width)
     {
         this.depth = depth;
         this.width = width;
@@ -45,7 +59,10 @@ public class Field
 	public Tile getTile(int row, int col){
 		return map[row][col];
 	}
-    
+	public Tile getTile(Location location){
+		return map[location.getRow()][location.getCol()];
+	}
+
     /**
      * Empty the field.
      */
@@ -97,9 +114,9 @@ public class Field
      * @param location Where in the field.
      * @return The animal at the given location, or null if there is none.
      */
-    public Object getObjectAt(Location location)
+    public <T> T  getObjectAt(Location location)
     {
-        return getObjectAt(location.getRow(), location.getCol());
+        return (T)getObjectAt(location.getRow(), location.getCol());
     }
     
     /**
@@ -198,6 +215,85 @@ public class Field
         }
         return locations;
     }
+
+	/**
+	 * The same as the previous one but not shuffled
+	 * @param location The location from which to generate adjacencies.
+	 * @param size The number of blocks from the center
+	 * @return A list of locations adjacent to that given.
+	 */
+	public List<Location> adjacentLocations(Location location, int size)
+	{
+		assert location != null : "Null location passed to adjacentLocations";
+		// The list of locations to be returned.
+		List<Location> locations = new LinkedList<>();
+
+		int row = location.getRow();
+		int col = location.getCol();
+
+		for(int r = row - size; r <= row + size; r++){
+			for(int c = col - size; c <= col + size; c++){
+				Location next = new Location(r, c);
+				if(inBounds(next) && !next.equals(location)){
+					locations.add(next);
+				}
+			}
+		}
+
+
+		return locations;
+	}
+
+	/**
+	 * The same as the previous one but not shuffled
+	 * @param location The location from which to generate adjacencies.
+	 * @param size The number of blocks from the center
+	 * @return A list of locations adjacent to that given.
+	 */
+	public List<Location> plusLocations(Location location, int size)
+	{
+		assert location != null : "Null location passed to adjacentLocations";
+		// The list of locations to be returned.
+		List<Location> locations = new LinkedList<>();
+		int row = location.getRow();
+		int col = location.getCol();
+
+		for(int r = row - size; r <= row + size; r++){
+			Location next = new Location(r, col);
+			if(inBounds(next) && !next.equals(location)){
+				locations.add(next);
+			}
+		}
+
+		for(int c = col - size; c <= col + size; c++){
+			Location next = new Location(row, c);
+			if(inBounds(next) && !next.equals(location)){
+				locations.add(next);
+			}
+		}
+
+		return locations;
+	}
+
+
+	/**
+	 * @param location the location that will be checked
+	 * @return Is the location in the boundaries of the field
+	 */
+	private boolean inBounds(Location location) {
+		int row = location.getRow();
+		int col = location.getCol();
+
+		if(row >= this.depth){
+			return false;
+		}else if(col >= this.width){
+			return false;
+		}else if(col < 0 || row < 0){
+			return false;
+		}else {
+			return true;
+		}
+	}
 
     /**
      * Return the depth of the field.

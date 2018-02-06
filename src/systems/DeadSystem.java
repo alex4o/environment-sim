@@ -9,7 +9,6 @@ import components.Move;
 public class DeadSystem extends EntitySystem {
 	private ImmutableArray<Entity> entities;
 
-	private ComponentMapper<Move> mm = ComponentMapper.getFor(Move.class);
 	private ComponentMapper<Life> lm = ComponentMapper.getFor(Life.class);
 
 	Engine engine;
@@ -18,7 +17,7 @@ public class DeadSystem extends EntitySystem {
 	}
 
 	public void addedToEngine(Engine engine) {
-		entities = engine.getEntitiesFor(Family.all(Life.class, Move.class).get());
+		entities = engine.getEntitiesFor(Family.all(Life.class).get());
 	}
 
 	public void update(float deltaTime) {

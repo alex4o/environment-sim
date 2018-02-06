@@ -78,4 +78,9 @@ public class Location implements Component
 	public double distance(Location b) {
 		return Math.sqrt(Math.pow(Math.max(this.col, b.getCol()) - Math.min(this.col, b.getCol()), 2) + Math.pow(Math.max(this.row, b.getRow()) - Math.min(this.row, b.getRow()), 2));
 	}
+
+	public void set(Location location){
+        this.row = location.row;
+        this.col = location.col;
+    }
 }
