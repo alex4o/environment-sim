@@ -157,7 +157,7 @@ public class SimulatorView extends JFrame
             setVisible(true);
         }
             
-        stepLabel.setText(STEP_PREFIX + step);
+        stepLabel.setText(String.format("Steps: %d, Time of day: %s", step, simulator.time.toString()));
         stats.reset();
         
         fieldView.preparePaint();
@@ -169,10 +169,10 @@ public class SimulatorView extends JFrame
                 if(animal != null) {
                     stats.incrementCount(nameMapper.get(animal).getName());
 
-                    fieldView.drawMark(col, row, tile.getColor(), colourMapper.get(animal).getColor());
+                    fieldView.drawMark(col, row, tile, colourMapper.get(animal).getColor());
                 }
                 else {
-                    fieldView.drawMark(col, row, tile.getColor(), EMPTY_COLOR);
+                    fieldView.drawMark(col, row, tile, EMPTY_COLOR);
                 }
             }
         }
@@ -275,11 +275,18 @@ public class SimulatorView extends JFrame
         /**
          * Paint on grid location on this field in a given color.
          */
-        public void drawMark(int x, int y, Color ground, Color over)
+        public void drawMark(int x, int y, Tile tile, Color over)
         {
 			int padding = xScale/6;
-			g.setColor(ground);
+			g.setColor(tile.getColor());
 			g.fillRect(x * xScale, y * yScale, xScale, yScale);
+
+			if(tile.getStatusColor() != null){
+				g.setColor(tile.getStatusColor());
+//				g.setColor(Color.CYAN);
+				g.fillRect(x * xScale, y * yScale, xScale/5, yScale/5);
+
+			}
 
 			if(over.equals(Color.white)) {
 				return;

@@ -1,15 +1,11 @@
 package components;
 
-public class Gender {
+import com.badlogic.ashley.core.Component;
+
+public class Gender implements Component {
 	public enum GenderType {
-		MALE,
-		FEMALE,
-		CIS,
-		NONBINARY,
-		APACHEHELICOPTER,
-		VENN,
-		POLY,
-		PAN
+		Male,
+		Female
 	}
 
 	GenderType gender;
@@ -24,5 +20,12 @@ public class Gender {
 
 	public void setGender(GenderType gender) {
 		this.gender = gender;
+	}
+
+	@Override
+	public String toString() {
+		return "Gender{" +
+				"gender=" + gender +
+				'}';
 	}
 }

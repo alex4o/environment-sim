@@ -13,6 +13,7 @@ public class Tile {
 
 	private TileType type;
 	private Color color;
+	private Color statusColor;
 	private double elevation;
 	private boolean walkable = true;
 
@@ -46,5 +47,13 @@ public class Tile {
 
 	public void setType(TileType type) {
 		this.type = type;
+	}
+
+	public Color getStatusColor() {
+		return statusColor;
+	}
+
+	public void setStatusColor(Color statusColor) {
+		this.statusColor = statusColor;
 	}
 }

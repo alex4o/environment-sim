@@ -222,7 +222,7 @@ public class Field
 	 * @param size The number of blocks from the center
 	 * @return A list of locations adjacent to that given.
 	 */
-	public List<Location> adjacentLocations(Location location, int size)
+	public List<Location> adjacentLocations(Location location, int size, boolean empty)
 	{
 		assert location != null : "Null location passed to adjacentLocations";
 		// The list of locations to be returned.
@@ -235,6 +235,9 @@ public class Field
 			for(int c = col - size; c <= col + size; c++){
 				Location next = new Location(r, c);
 				if(inBounds(next) && !next.equals(location)){
+					if(!empty && this.getObjectAt(next) == null){
+						continue;
+					}
 					locations.add(next);
 				}
 			}
@@ -243,6 +246,11 @@ public class Field
 
 		return locations;
 	}
+
+	public List<Location> adjacentLocations(Location location, int size){
+		return adjacentLocations(location, size, true);
+	}
+
 
 	/**
 	 * The same as the previous one but not shuffled

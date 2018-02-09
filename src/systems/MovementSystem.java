@@ -6,6 +6,7 @@ import components.Life;
 import components.Location;
 import components.Move;
 import main.Field;
+import main.Models;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,10 +28,6 @@ public class MovementSystem extends EntitySystem {
 	public void addedToEngine(Engine engine) {
 		entities = engine.getEntitiesFor(Family.all(Location.class, Move.class).get());
 	}
-	private <T extends Component> Optional<T> get(Entity entity, ComponentMapper<T> mapper){
-		return Optional.ofNullable(mapper.get(entity));
-	}
-
 
 	public List<Location> getFreeAdjacentLocations(Location location) {
 		List<Location> free = new LinkedList<>();
@@ -43,7 +40,7 @@ public class MovementSystem extends EntitySystem {
 					free.add(next);
 				}
 			}else {
-				Optional<Boolean> alive = get(entitiy, lifem).map(l -> l.isAlive());
+				Optional<Boolean> alive = Models.get(entitiy, lifem).map(l -> l.isAlive());
 				if (!alive.orElse(true)){
 					free.add(next);
 				}

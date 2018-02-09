@@ -29,9 +29,13 @@ public class Simulator
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
     // The probability that a fox will be created in any given grid position.
-    private static final double FOX_CREATION_PROBABILITY = 0.02;
+    private static final double FOX_CREATION_PROBABILITY = 0.09;
     // The probability that a rabbit will be created in any given grid position.
-    private static final double RABBIT_CREATION_PROBABILITY = 0.08;    
+    private static final double RABBIT_CREATION_PROBABILITY = 0.20;
+	// The probability that a coyote will be created in any given grid position.
+	private static final double COYOTE_CREATION_PROBABILITY = 0.2;
+	// The probability that a raccoon will be created in any given grid position.
+	private static final double RACCOON_CREATION_PROBABILITY = 0.2;
 
     // List of animals in the field.
     private List<Animal> animals;
@@ -46,6 +50,7 @@ public class Simulator
     // A noise generator for the world map
     private Perlin perlin = new Perlin();
 	private Timer timer;
+	public DayTime time = DayTime.Midday;
 
     /**
      * Construct a simulation field with default size.
@@ -80,7 +85,7 @@ public class Simulator
 		perlin.setFrequency(10);
 		perlin.setLacunarity(20);
 		perlin.setOctaveCount(4);
-		perlin.setSeed(1984);
+		perlin.setSeed(234435);
 		this.engine = engine;
 
 
@@ -181,6 +186,7 @@ public class Simulator
 
 		newEntities.clear();
         view.showStatus(step, field);
+        time = time.next();
     }
         
     /**
@@ -263,6 +269,14 @@ public class Simulator
                 else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
 					Entity rabbit = Models.createRabbit(true, new Location(row, col));
 					engine.addEntity(rabbit);
+
+				} else if(rand.nextDouble() <= RACCOON_CREATION_PROBABILITY) {
+					Entity entity = Models.createRaccoon(true, new Location(row, col));
+					engine.addEntity(entity);
+
+				} else if(rand.nextDouble() <= COYOTE_CREATION_PROBABILITY) {
+					Entity entity = Models.createCoyote(true, new Location(row, col));
+					engine.addEntity(entity);
 
 				}else if(field.plusLocations(new Location(row, col), 1).stream().filter(location -> field.getTile(location).getType() == Tile.TileType.Water).count() > 1){
 					if(rand.nextDouble() <= 0.5) {

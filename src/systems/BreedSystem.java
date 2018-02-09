@@ -9,6 +9,7 @@ import main.*;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 public class BreedSystem extends EntitySystem {
@@ -20,6 +21,8 @@ public class BreedSystem extends EntitySystem {
 	private ComponentMapper<Life> lm = ComponentMapper.getFor(Life.class);
 	private ComponentMapper<Breed> bm = ComponentMapper.getFor(Breed.class);
 	private ComponentMapper<Location> locm = ComponentMapper.getFor(Location.class);
+	private ComponentMapper<Gender> gm = ComponentMapper.getFor(Gender.class);
+	private ComponentMapper<Name> nm = ComponentMapper.getFor(Name.class);
 	private Cloner cloner = new Cloner();
 
 	Field field;
@@ -30,7 +33,7 @@ public class BreedSystem extends EntitySystem {
 	}
 
 	public void addedToEngine(Engine engine) {
-		entities = engine.getEntitiesFor(Family.all(Age.class, Life.class, Location.class, Breed.class).get());
+		entities = engine.getEntitiesFor(Family.all(Name.class, Age.class, Life.class, Location.class, Breed.class, Gender.class).get());
 	}
 
 	private boolean canBreed(Age age, Breed breed) {
@@ -38,48 +41,43 @@ public class BreedSystem extends EntitySystem {
 	}
 
 	public void update(float deltaTime) {
+		Random random = Randomizer.getRandom();
+
 		for(Entity entity: entities){
 			Age age = am.get(entity);
 			Life life = lm.get(entity);
 			Breed breed = bm.get(entity);
 			Location location = locm.get(entity);
-			Random random = Randomizer.getRandom();
+			Gender gender = gm.get(entity);
+			Name name = nm.get(entity);
+
+			List<Entity> breedable =  field.adjacentLocations(location, 1, false).stream()
+					.map(l -> (Entity)field.getObjectAt(l))
+					.filter(e -> Models.get(e, nm).map(nc -> nc.getName().equals(name.getName())).orElse(false))
+					.filter(e -> Models.get(e, gm).map(nc -> nc.getGender().equals(gender.getGender())).orElse(false))
+					.collect(Collectors.toList());
+
+			if(breedable.size() > 0) {
+				Entity partner = breedable.get(Randomizer.getRandom().nextInt(breedable.size()));
 
 
-			if(canBreed(age, breed) && life.isAlive()){
-				if(random.nextDouble() <= breed.getProbability()){
-					int births = random.nextInt(breed.getMaxLittle()) + 1;
-					List<Location> free = field.getFreeAdjacentLocations(location);
 
-					for(int b = 0; b < births && free.size() > 0; b++) {
-						Location loc = free.remove(0);
-						Entity child = new Entity();
+				if (canBreed(age, breed) && canBreed(am.get(partner), bm.get(partner)) && life.isAlive()) {
+					if (random.nextDouble() <= breed.getProbability()) {
+						int births = random.nextInt(breed.getMaxLittle()) + 1;
+						List<Location> free = field.getFreeAdjacentLocations(location);
+						for (int b = 0; b < births && free.size() > 0; b++) {
+							Location loc = free.remove(0);
 
-						if(wantToUseReflection){
-							child = Models.createAnimal(entity.getComponent(Name.class).getName(), false, loc);
-						}else {
-							for (Component component : entity.getComponents()) {
-								if (component instanceof Parent) continue;
-								child.add(cloner.deepClone(component));
-							}
+							Entity child = Models.createAnimal(nm.get(entity).getName(), false, loc);
 
-							am.get(child).setAge(0);
-							lm.get(child).isAlive();
-							locm.get(child).set(loc);
-							Hunger hunger = child.getComponent(Hunger.class);
-							if (hunger != null) {
-								hunger.setLevel(9);
-							}
+							engine.addEntity(child);
+
 						}
-//						child.add(new Parent(entity));
-
-						engine.addEntity(child);
-//						Simulator.newEntities.add(child);
-
 					}
-
 				}
 			}
 		}
 	}
 }
+
