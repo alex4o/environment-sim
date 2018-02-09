@@ -53,7 +53,7 @@ public class Models {
 		Entity fox = new Entity();
 		fox.add(createAge(random ? Optional.empty() : Optional.of(0), 150 * 5));
 		fox.add(createHunger(random, 9));
-		fox.add(new Food(FoodType.ANIMAL));
+		fox.add(new Food(FoodType.FoodEnum.ANIMAL.getType("Rabbits")));
 		fox.add(new Move());
 		fox.add(location);
 		fox.add(new ColorComponent(Color.RED));
@@ -73,7 +73,7 @@ public class Models {
 	public static Entity createRabbit(boolean random, Location location) {
 		Entity rabbit = new Entity();
 		rabbit.add(createAge(random ? Optional.empty() : Optional.of(0), 40 * 5));
-		rabbit.add(new Food(FoodType.PLANT));
+		rabbit.add(new Food(FoodType.FoodEnum.PLANT.getType()));
 		rabbit.add(location);
 		rabbit.add(new Move());
 		rabbit.add(new ColorComponent(Color.ORANGE));
@@ -90,7 +90,7 @@ public class Models {
 
 		coyote.add(createAge(random ? Optional.empty() : Optional.of(0), 100 * 5));
 		coyote.add(createHunger(random, 4*5));
-		coyote.add(new Food(FoodType.ANIMAL));
+		coyote.add(new Food(FoodType.FoodEnum.ANIMAL.getType("Raccoon", "Rabbit" ,"Fox")));
 		coyote.add(location);
 		coyote.add(new Move());
 		coyote.add(new ColorComponent(Color.BLACK));
@@ -112,7 +112,7 @@ public class Models {
 
 		raccoon.add(createAge(random ? Optional.empty() : Optional.of(0), 60 * 5));
 		raccoon.add(createHunger(random, 5*5));
-		raccoon.add(new Food(FoodType.ANIMAL));
+		raccoon.add(new Food(FoodType.FoodEnum.PLANT.getType("Plant")));
 		raccoon.add(location);
 		raccoon.add(new Move());
 		raccoon.add(new ColorComponent(Color.PINK));
