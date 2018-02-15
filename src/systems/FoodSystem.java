@@ -36,8 +36,8 @@ public class FoodSystem extends EntitySystem {
 			Food food = fm.get(entity);
 			Life life = lm.get(entity);
 			Hunger hunger = hm.get(entity);
-
-			switch (food.getEatType()) {
+			List<String> things = food.getEatType().things; // the names of the animals that this likes eating
+			switch (food.getEatType().type) {
 				case ANIMAL:
 					if(life.isAlive()){
 						if(mm.has(entity)) {
