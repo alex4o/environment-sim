@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class Tile {
 
-	enum TileType {
+	public enum TileType {
 		Water,
 		Ground,
 		Grass,
@@ -16,6 +16,29 @@ public class Tile {
 	private Color statusColor;
 	private double elevation;
 	private boolean walkable = true;
+	public int clearIn;
+
+	public Object data;
+
+	public Weather weather = new Weather();
+
+	public Weather getWeather() {
+		return weather;
+	}
+
+	public void setWeather(Weather weather) {
+		this.weather = weather;
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
+	}
+
+
 
 	public Color getColor() {
 		return color;

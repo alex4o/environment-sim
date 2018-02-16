@@ -12,12 +12,16 @@ public class Main {
 		engine.addSystem(new AgeSystem());
 		engine.addSystem(new HungerSystem());
 		engine.addSystem(new BreedSystem(engine));
+		engine.addSystem(new PlantBreedSystem(engine));
 		engine.addSystem(new DiseaseSystem());
+		engine.addSystem(new UndeseasedSystem());
+		engine.addSystem(new SleepSystem());
 
 		engine.addSystem(new FoodSystem());
 
 		engine.addSystem(new MovementSystem());
 		engine.addSystem(new DeadSystem(engine));
+
 
 
 	}

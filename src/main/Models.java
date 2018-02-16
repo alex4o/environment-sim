@@ -38,10 +38,10 @@ public class Models {
 	public static Disease createDisease(Optional<Disease.DiseaseType> type, int lasting){
 		Random rand = Randomizer.getRandom();
 		if(type.isPresent()) {
-			return new Disease(type.get(), lasting);
+			return new Disease(type.get());
 
 		}else{
-			return new Disease(Disease.DiseaseType.values()[rand.nextInt(Disease.DiseaseType.values().length)], lasting);
+			return new Disease(Disease.DiseaseType.values()[rand.nextInt(Disease.DiseaseType.values().length)]);
 		}
 	}
 
@@ -73,6 +73,8 @@ public class Models {
 	public static Entity createRabbit(boolean random, Location location) {
 		Entity rabbit = new Entity();
 		rabbit.add(createAge(random ? Optional.empty() : Optional.of(0), 40 * 5));
+		rabbit.add(createHunger(random, 40*5));
+
 		rabbit.add(new Food(FoodType.FoodEnum.PLANT.getType()));
 		rabbit.add(location);
 		rabbit.add(new Move());
@@ -130,8 +132,10 @@ public class Models {
 		plant.add(new ColorComponent(new Color(120,200,125,150)));
 		plant.add(new Name("Plant"));
 		plant.add(location);
+		plant.add(createAge(Optional.empty(), 200*5));
+		plant.add(new Breed(10, 0.80, 4));
 
-//		plant.add(new FoodValue(5, 10));
+		plant.add(new FoodValue(5, 10));
 		return plant;
 	}
 
@@ -140,8 +144,10 @@ public class Models {
 		plant.add(new ColorComponent(new Color(120,255,125,100)));
 		plant.add(new Name("Moss"));
 		plant.add(location);
+		plant.add(createAge(Optional.empty(), 200*5));
+		plant.add(new Breed(10, 0, 4));
 
-//		plant.add(new FoodValue(5, 10));
+		plant.add(new FoodValue(5, 10));
 		return plant;
 	}
 

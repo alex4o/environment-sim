@@ -2,10 +2,7 @@ package main;
 
 import components.Location;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Represent a rectangular grid of field positions.
@@ -62,6 +59,18 @@ public class Field
 	}
 	public Tile getTile(Location location){
 		return map[location.getRow()][location.getCol()];
+	}
+
+	public List<Tile> getTiles() {
+    	List<Tile> tiles = new ArrayList<>();
+
+		for(int row = 0; row < depth; row++) {
+			for(int col = 0; col < width; col++) {
+				tiles.add(map[row][col]);
+			}
+		}
+
+		return tiles;
 	}
 
     /**

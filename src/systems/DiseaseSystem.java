@@ -36,13 +36,11 @@ public class DiseaseSystem extends EntitySystem {
 			switch (disease.getType()) {
 				case Toxocariasis:
 					field.getTile(location).setStatusColor(new Color(102, 51, 0));
+					field.getTile(location).setData(disease);
+
 
 					break;
 				case Generic:
-					field.adjacentLocations(location, 2, false).stream()
-							.map(loc -> (Entity)field.getObjectAt(loc))
-							.forEach(e -> e.add(new Disease(Disease.DiseaseType.Generic, 25)));
-
 					break;
 			}
 

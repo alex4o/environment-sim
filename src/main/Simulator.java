@@ -49,6 +49,7 @@ public class Simulator
     private Engine engine;
     // A noise generator for the world map
     private Perlin perlin = new Perlin();
+	private Perlin weather = new Perlin();
 	private Timer timer;
 	public static DayTime time = DayTime.Midday;
 
@@ -90,6 +91,13 @@ public class Simulator
 		perlin.setLacunarity(20);
 		perlin.setOctaveCount(4);
 		perlin.setSeed(234435);
+
+
+	    weather.setFrequency(12);
+	    weather.setLacunarity(20);
+	    weather.setOctaveCount(2);
+	    weather.setSeed(5405690);
+
 		this.engine = engine;
 
 
@@ -187,6 +195,16 @@ public class Simulator
 		}
 
 
+		for(Tile tile: field.getTiles()){
+			tile.clearIn -= 1;
+			if(tile.clearIn <= 0){
+				tile.setStatusColor(null);
+				tile.setData(null);
+			}
+		}
+
+
+		weather(step, step);
 
 		newEntities.clear();
         view.showStatus(step, field);
@@ -201,6 +219,8 @@ public class Simulator
         step = 0;
         animals.clear();
 		buildWorld();
+
+	    weather(step, step);
 
 
 		populate();
@@ -244,6 +264,24 @@ public class Simulator
 			}
 		}
 	}
+
+
+	private void weather(int offsetRow, int offsetCol){
+		for(int row = 0; row < field.getDepth(); row++) {
+			for(int col = 0; col < field.getWidth(); col++) {
+				double level = weather.getValue((offsetRow +row) / 100.0, (offsetCol + col) / 100.0, 10);
+
+				Tile tile = field.getTile(row, col);
+
+				if (level >= 0.8) {
+					tile.weather.isCloudy = true;
+				}else{
+					tile.weather.isCloudy = false;
+				}
+
+			}
+		}
+	}
     
     /**
      * Randomly populate the field with foxes and rabbits.
@@ -276,7 +314,7 @@ public class Simulator
 
 				} else if(rand.nextDouble() <= RACCOON_CREATION_PROBABILITY) {
 					Entity entity = Models.createRaccoon(true, new Location(row, col));
-					engine.addEntity(entity);
+//					engine.addEntity(entity);
 
 				} else if(rand.nextDouble() <= COYOTE_CREATION_PROBABILITY) {
 					Entity entity = Models.createCoyote(true, new Location(row, col));

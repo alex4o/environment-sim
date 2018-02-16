@@ -59,7 +59,7 @@ public class SimulatorView extends JFrame
         stats = new FieldStats();
         colors = new LinkedHashMap<>();
         this.simulator = simulator;
-        setTitle("actors.Fox and actors.Rabbit Simulation");
+        setTitle("Simulation");
         stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
         infoLabel = new JLabel("  ", JLabel.CENTER);
         population = new JLabel(POPULATION_PREFIX, JLabel.CENTER);
@@ -225,7 +225,9 @@ public class SimulatorView extends JFrame
 					Point point = mouseEvent.getPoint();
 					Entity animal = Field.getInstance().getObjectAt(point.y/yScale, point.x/xScale);
 
-					setInfoText(animal.toString());
+					if(animal !=  null) {
+						setInfoText(animal.toString());
+					}
 
 					for(Component c : animal.getComponents()){
 						System.out.println(c);
@@ -288,13 +290,31 @@ public class SimulatorView extends JFrame
 
 			}
 
-			if(over.equals(Color.white)) {
-				return;
+
+
+
+
+
+			if(!over.equals(Color.white)) {
+
+				g.setColor(over);
+				g.fillRect(x * xScale + padding, y * yScale + padding, xScale - padding * 2, yScale - padding * 2);
+
+
 			}
 
-			g.setColor(over);
-            g.fillRect(x * xScale + padding, y * yScale + padding, xScale - padding * 2, yScale - padding * 2);
+			if(tile.weather.isCloudy) {
+				g.setColor(new Color(255, 255, 255, 150));
+				int size_x = xScale / 6;
+				int size_y = yScale / 6;
 
+				for (int jj = 1; jj < 8; jj++) {
+					int j = jj - 1;
+					for (int i = jj % 2; i < 5 + jj % 2; i += 2) {
+						g.fillRect((x * xScale) + (i * size_x), (y * yScale) + (j * size_y), size_x, size_y);
+					}
+				}
+			}
 
 //			if(color.equals(ColorComponent.white)){
 //				return;

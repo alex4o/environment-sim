@@ -54,7 +54,7 @@ public class MovementSystem extends EntitySystem {
 		if(e != null){
 			if(lifem.has(e) ){
 				Life life = lifem.get(e);
-				if(life.isAlive() && SleepSystem.sleep() ){
+				if(life.isAlive() ){
 					return false; // if it is alive we continue
 				}
 			}else{

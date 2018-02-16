@@ -4,8 +4,14 @@ import com.badlogic.ashley.core.Component;
 
 public class Disease implements Component {
 	public enum DiseaseType {
-		Toxocariasis,
-		Generic
+		Toxocariasis(10),
+		Generic(20);
+		public final int deterioration;
+
+		DiseaseType(int deterioration){
+
+			this.deterioration = deterioration;
+		}
 	}
 
 	private DiseaseType type;
@@ -15,6 +21,12 @@ public class Disease implements Component {
 	public Disease(DiseaseType type, int deterioration) {
 		this.type = type;
 		this.deterioration = deterioration;
+	}
+
+	public Disease(DiseaseType type) {
+
+		this.type = type;
+		this.deterioration = type.deterioration;
 	}
 
 	public DiseaseType getType() {
