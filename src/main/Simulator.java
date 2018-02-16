@@ -50,7 +50,11 @@ public class Simulator
     // A noise generator for the world map
     private Perlin perlin = new Perlin();
 	private Timer timer;
-	public DayTime time = DayTime.Midday;
+	public static DayTime time = DayTime.Midday;
+
+	public static DayTime getTime(){
+		return time;
+	}
 
     /**
      * Construct a simulation field with default size.

@@ -9,6 +9,7 @@ public enum DayTime {
 
 
 	int value;
+
 	DayTime(int value){
 		this.value = value;
 	}

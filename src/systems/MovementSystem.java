@@ -52,9 +52,9 @@ public class MovementSystem extends EntitySystem {
 
 	private boolean canWalkOver(Entity e) {
 		if(e != null){
-			if(lifem.has(e)){
+			if(lifem.has(e) ){
 				Life life = lifem.get(e);
-				if(life.isAlive()){
+				if(life.isAlive() && SleepSystem.sleep() ){
 					return false; // if it is alive we continue
 				}
 			}else{

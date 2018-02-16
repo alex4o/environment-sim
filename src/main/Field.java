@@ -15,6 +15,7 @@ import java.util.Random;
  * @version 2016.02.29
  */
 public class Field
+
 {
     // A random number generator for providing random locations.
     private static final Random rand = Randomizer.getRandom();

@@ -18,8 +18,8 @@ public class FoodType {
 		}
 	}
 
-	FoodEnum type;
-	List<String> things;
+	public FoodEnum type;
+	public List<String> things;
 	private FoodType(){
 
 	}
