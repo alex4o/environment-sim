@@ -15,16 +15,25 @@ import java.util.Random;
 
 public class Models {
 
+	/**
+	 * Sets the age randomly for the different animals
+	 * @param age, can set a specific age for the animals
+	 * @param maxAge, sets the maxAge which the animal can be
+	 * @return
+	 */
+
 
 	public static Age createAge(Optional<Integer> age, int maxAge){
 		Random rand = Randomizer.getRandom();
-		if(age.isPresent()) {
-			return new Age(age.get(), maxAge);
-
-		}else{
-			return new Age(rand.nextInt(maxAge), maxAge);
-		}
+		return age.map(integer -> new Age(integer, maxAge)).orElseGet(() -> new Age(rand.nextInt(maxAge), maxAge));
 	}
+
+	/**
+	 * Sets the Hunger level of the animals between upto the maxLevel
+	 * @param random, set true if you want the  the animals to have a random hunger level
+	 * @param maxLevel, sets the maximum hunger levels
+	 * @return
+	 */
 
 	public static Hunger createHunger(boolean random, int maxLevel){
 		int level = maxLevel;
@@ -35,30 +44,45 @@ public class Models {
 		return new Hunger(level, maxLevel);
 	}
 
+	/**
+	 *
+	 * @param type, can specify what type of disease you want the animal to have.
+	 * @param lasting
+	 * @return
+	 */
+
 	public static Disease createDisease(Optional<Disease.DiseaseType> type, int lasting){
 		Random rand = Randomizer.getRandom();
-		if(type.isPresent()) {
-			return new Disease(type.get());
-
-		}else{
-			return new Disease(Disease.DiseaseType.values()[rand.nextInt(Disease.DiseaseType.values().length)]);
-		}
+		return type.map(Disease::new).orElseGet(() -> new Disease(Disease.DiseaseType.values()[rand.nextInt(Disease.DiseaseType.values().length)]));
 	}
 
+
+	/**
+	 *
+	 * @param prob, sets the probability for creating the different Genders
+	 * @return
+	 */
 	public static Gender createGender(double prob){
 		return new Gender(Randomizer.getRandom().nextDouble() <= prob ? Gender.GenderType.Female : Gender.GenderType.Male);
 	}
 
+	/**
+	 *
+	 * @param random, specify whether you want a random age and hunger level assigned
+	 * @param location, the tile that the animal is on
+	 * @return
+	 */
+
 	public static Entity createFox(boolean random, Location location) {
 		Entity fox = new Entity();
 		fox.add(createAge(random ? Optional.empty() : Optional.of(0), 150 * 5));
-		fox.add(createHunger(random, 9));
+		fox.add(createHunger(random, 90*5));
 		fox.add(new Food(FoodType.FoodEnum.ANIMAL.getType("Rabbits")));
 		fox.add(new Move());
 		fox.add(location);
 		fox.add(new ColorComponent(Color.RED));
 		fox.add(new Life());
-		fox.add(new Breed(15, 0.1, 2));
+		fox.add(new Breed(1, 0.9, 2));
 		fox.add(new Name("Fox"));
 		fox.add(createGender(0.5));
 
@@ -70,38 +94,53 @@ public class Models {
 		return fox;
 	}
 
+	/**
+	 *
+	 * @param random, specify whether you want a random age and hunger level assigned
+	 * @param location, the tile that the animal is on
+	 * @return
+	 */
+
 	public static Entity createRabbit(boolean random, Location location) {
 		Entity rabbit = new Entity();
-		rabbit.add(createAge(random ? Optional.empty() : Optional.of(0), 40 * 5));
-		rabbit.add(createHunger(random, 40*5));
+		rabbit.add(createAge(random ? Optional.empty() : Optional.of(0), 20 * 5));
+		rabbit.add(createHunger(random, 400*5));
 
 		rabbit.add(new Food(FoodType.FoodEnum.PLANT.getType()));
 		rabbit.add(location);
 		rabbit.add(new Move());
 		rabbit.add(new ColorComponent(Color.ORANGE));
 		rabbit.add(new Life());
-		rabbit.add(new Breed(5, 0.60, 4));
+		rabbit.add(new Breed(1, 0.70, 4));
 		rabbit.add(new Name("Rabbit"));
 		rabbit.add(createGender(0.5));
 
 		return rabbit;
 	}
 
+
+	/**
+	 *
+	 * @param random, specify whether you want a random age and hunger level assigned
+	 * @param location, the tile that the animal is on
+	 * @return
+	 */
+
 	public static Entity createCoyote(boolean random, Location location) {
 		Entity coyote = new Entity();
 
-		coyote.add(createAge(random ? Optional.empty() : Optional.of(0), 100 * 5));
-		coyote.add(createHunger(random, 4*5));
+		coyote.add(createAge(random ? Optional.empty() : Optional.of(0), 10 * 5));
+		coyote.add(createHunger(random, 80*5));
 		coyote.add(new Food(FoodType.FoodEnum.ANIMAL.getType("Raccoon", "Rabbit" ,"Fox")));
 		coyote.add(location);
 		coyote.add(new Move());
 		coyote.add(new ColorComponent(Color.BLACK));
 		coyote.add(new Life());
-		coyote.add(new Breed(10, 0.60, 4));
+		coyote.add(new Breed(1, 0.80, 4));
 		coyote.add(new Name("Coyote"));
 		coyote.add(createGender(0.5));
 
-		if(Randomizer.getRandom().nextDouble() < 0.3) {
+		if(Randomizer.getRandom().nextDouble() < 0.5) {
 			// TODO: Make the ground clean after some amount of time
 			coyote.add(createDisease(Optional.of(Disease.DiseaseType.Generic), 10));
 		}
@@ -109,17 +148,24 @@ public class Models {
 		return coyote;
 	}
 
+	/**
+	 *
+	 * @param random, specify whether you want a random age and hunger level assigned
+	 * @param location, the tile that the animal is on
+	 * @return
+	 */
+
 	public static Entity createRaccoon(boolean random, Location location) {
 		Entity raccoon = new Entity();
 
 		raccoon.add(createAge(random ? Optional.empty() : Optional.of(0), 60 * 5));
-		raccoon.add(createHunger(random, 5*5));
+		raccoon.add(createHunger(random, 100*5));
 		raccoon.add(new Food(FoodType.FoodEnum.PLANT.getType("Plant")));
 		raccoon.add(location);
 		raccoon.add(new Move());
 		raccoon.add(new ColorComponent(Color.PINK));
 		raccoon.add(new Life());
-		raccoon.add(new Breed(6, 0.60, 4));
+		raccoon.add(new Breed(1, 0.90, 4));
 		raccoon.add(new Name("Raccoon"));
 		raccoon.add(createGender(0.5));
 
@@ -127,6 +173,10 @@ public class Models {
 		return raccoon;
 	}
 
+	/**
+	 * @param location, the tile that the animal is on
+	 * @return
+	 */
 	public static Entity createPlant(boolean random ,Location location) {
 		Entity plant = new Entity();
 		plant.add(new ColorComponent(new Color(120,200,125,150)));
@@ -139,6 +189,11 @@ public class Models {
 		return plant;
 	}
 
+	/**
+	 *
+	 * @param location, the tile that the animal is on
+	 * @return
+	 */
 	public static Entity createMoss(boolean random ,Location location) {
 		Entity plant = new Entity();
 		plant.add(new ColorComponent(new Color(120,255,125,100)));

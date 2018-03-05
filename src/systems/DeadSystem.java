@@ -20,6 +20,10 @@ public class DeadSystem extends EntitySystem {
 		entities = engine.getEntitiesFor(Family.all(Life.class).get());
 	}
 
+	/**
+	 * removes dead animals after every step
+	 * @param deltaTime, time for each step
+	 */
 	public void update(float deltaTime) {
 		for(Entity entity: entities){
 			Life life = lm.get(entity);

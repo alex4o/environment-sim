@@ -10,6 +10,8 @@ public enum DayTime {
 
 	int value;
 
+	//Switch statement which iterates over the number of Steps
+
 	DayTime(int value){
 		this.value = value;
 	}

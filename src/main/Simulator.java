@@ -29,13 +29,13 @@ public class Simulator
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
     // The probability that a fox will be created in any given grid position.
-    private static final double FOX_CREATION_PROBABILITY = 0.09;
+    private static final double FOX_CREATION_PROBABILITY = 0.1;
     // The probability that a rabbit will be created in any given grid position.
-    private static final double RABBIT_CREATION_PROBABILITY = 0.20;
+    private static final double RABBIT_CREATION_PROBABILITY = 0.12;
 	// The probability that a coyote will be created in any given grid position.
-	private static final double COYOTE_CREATION_PROBABILITY = 0.2;
+	private static final double COYOTE_CREATION_PROBABILITY = 0.02;
 	// The probability that a raccoon will be created in any given grid position.
-	private static final double RACCOON_CREATION_PROBABILITY = 0.2;
+	private static final double RACCOON_CREATION_PROBABILITY = 0.08;
 
     // List of animals in the field.
     private List<Animal> animals;
@@ -228,7 +228,10 @@ public class Simulator
         view.showStatus(step, field);
     }
 
-    private void buildWorld(){
+	/**
+	 * Generates the world map using Perlin noise
+	 */
+	private void buildWorld(){
 		for(int row = 0; row < field.getDepth(); row++) {
 			for(int col = 0; col < field.getWidth(); col++) {
 				double level = perlin.getValue(row / 100.0, col / 100.0, 10);
@@ -241,7 +244,7 @@ public class Simulator
 					tile.setWalkable(false);
 					tile.setType(Tile.TileType.Water);
 
-				} else if (level >= 1) {
+				} else if (level >= 1.02) {
 					double h = Math.abs(-level + 1);
 
 					int color = (int)((h * 15 ) * 150) + 100;
@@ -313,17 +316,17 @@ public class Simulator
 					engine.addEntity(rabbit);
 
 				} else if(rand.nextDouble() <= RACCOON_CREATION_PROBABILITY) {
-					Entity entity = Models.createRaccoon(true, new Location(row, col));
-//					engine.addEntity(entity);
+					Entity raccoon = Models.createRaccoon(true, new Location(row, col));
+					engine.addEntity(raccoon);
 
 				} else if(rand.nextDouble() <= COYOTE_CREATION_PROBABILITY) {
-					Entity entity = Models.createCoyote(true, new Location(row, col));
-					engine.addEntity(entity);
+					Entity coyote = Models.createCoyote(true, new Location(row, col));
+					engine.addEntity(coyote);
 
 				}else if(field.plusLocations(new Location(row, col), 1).stream().filter(location -> field.getTile(location).getType() == Tile.TileType.Water).count() > 1){
 					if(rand.nextDouble() <= 0.5) {
-						Entity rabbit = Models.createPlant(true, new Location(row, col));
-						engine.addEntity(rabbit);
+						Entity plant = Models.createPlant(true, new Location(row, col));
+						engine.addEntity(plant);
 					}
 				}
                 // else leave the location empty.

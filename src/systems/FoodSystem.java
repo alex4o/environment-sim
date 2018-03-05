@@ -68,6 +68,8 @@ public class FoodSystem extends EntitySystem {
 		}
 	}
 
+
+
 	private Optional<Location> findFood(Location location, Hunger hunger, List<String> thingsThatEat)
 	{
 		List<Location> adjacent = field.adjacentLocations(location);
@@ -90,7 +92,12 @@ public class FoodSystem extends EntitySystem {
 		return Optional.empty();
 	}
 
-
+	/**
+	 *
+	 * @param location
+	 * @param hunger
+	 * @return
+	 */
 	private Optional<Location> findFood(Location location, Hunger hunger)
 	{
 		List<Location> adjacent = field.adjacentLocations(location);

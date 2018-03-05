@@ -16,6 +16,9 @@ public class AgeSystem extends EntitySystem {
 	private ComponentMapper<Life> lm = ComponentMapper.getFor(Life.class);
 
 
+	/**
+	 * Sets the animal as dead when it reaches the maxAge
+	 */
 	public AgeSystem() {
 	}
 

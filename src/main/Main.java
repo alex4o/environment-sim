@@ -5,10 +5,15 @@ import systems.*;
 
 public class Main {
 
+	/**
+	 *  Adds the different Systems which implements the logic of the simulation
+	 *
+	 */
+
 	public static void main(String[] args){
 		Engine engine = new Engine();
 
-		Simulator simulator = new Simulator(engine, 89/2, 160/2);
+		Simulator simulator = new Simulator(engine, (int)(89), (int)(160));
 		engine.addSystem(new AgeSystem());
 		engine.addSystem(new HungerSystem());
 		engine.addSystem(new BreedSystem(engine));

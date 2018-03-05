@@ -40,6 +40,10 @@ public class BreedSystem extends EntitySystem {
 		return age.getAge() >= breed.getBreedAge();
 	}
 
+	/**
+	 * Checks adjacent animals and whether they meets the requirements for breeding
+	 * @param deltaTime, specifies the time for each step
+	 */
 	public void update(float deltaTime) {
 		Random random = Randomizer.getRandom();
 

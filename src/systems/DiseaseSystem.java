@@ -26,6 +26,10 @@ public class DiseaseSystem extends EntitySystem {
 		entities = engine.getEntitiesFor(Family.all(Location.class, Disease.class, Life.class).get());
 	}
 
+	/**
+	 * Sets the diseases on the tiles and increments the deterioration level
+	 * @param deltaTime
+	 */
 	public void update(float deltaTime) {
 		Field field = Field.getInstance();
 		for(Entity entity: entities){
